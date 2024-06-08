@@ -46,6 +46,30 @@ Local webclient setup instructions for Ubuntu (for MEGAchat see INSTALL.md)
 1. Install Apache2:
 ```
 sudo apt-get install apache2
+cat > /etc/apache2/sites-available/webclient.conf << "EOF"
+<VirtualHost *:80>
+    ServerName webclient.local
+    ServerAdmin webmaster@webclient.local
+    DocumentRoot /var/www/html/webclient.local
+    ErrorLog /var/log/apache2/webclient.local.error.log
+    CustomLog /var/log/apache2/webclient.local.access.log combined
+    LogLevel warn
+
+    <Directory "/var/www/html/webclient.local">
+        AllowOverride All
+    </Directory>
+</VirtualHost>
+EOF
+
+sudo a2ensite webclient.conf
+sudo a2enmod rewrite
+
+echo "127.0.0.1       webclient.local" | sudo tee -a /etc/hosts
+
+sudo systemctl restart apache2
+
+sudo chgrp -R www-data /var/www/html/
+sudo chown -R $USER /var/www/html/
 ```
 
 2. Create a new virtual host configuration file and edit it:
